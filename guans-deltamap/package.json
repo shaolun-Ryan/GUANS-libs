@@ -1,0 +1,27 @@
+{
+  "name": "guans-deltamap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/deltamap.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "dev": "webpack-dev-server --open chrome --port 1234 --hot"
+  },
+  "keywords": ["deltamap",
+    "php",
+    "variation",
+    "parallel coordinates",
+    "svg"
+  ],
+  "author": "shaolunRyan",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "d3": "^4.13.0"
+  }
+}
