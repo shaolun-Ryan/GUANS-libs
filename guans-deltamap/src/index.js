@@ -1,6 +1,5 @@
-import {
-  info
-} from '../info/author'
+import { info } from '../info/info'
+import { varia } from '../format/format'
 
 /* Insert attributes into global. Its ez to debug outside the IDE */
 Object.keys(info).forEach(function (obj) {
@@ -8,5 +7,6 @@ Object.keys(info).forEach(function (obj) {
 })
 
 export {
-  info
+  info,
+  varia
 };
