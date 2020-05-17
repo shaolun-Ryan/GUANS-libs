@@ -20,9 +20,10 @@ let varia = (arr) => {
         link:[]
     }
 
+
     /* 按对象的排布顺序找出name,start和end字段 */
-    const [name,start,end] = Object.keys(arr[0])
-    const attributes = Object.keys(arr[0]).splice(3)
+    let [name,start,end] = Object.keys(arr[0])
+    let attributes = Object.keys(arr[0]).splice(3)
     /* Every data is process into four variables:
     name
     start
@@ -31,10 +32,7 @@ let varia = (arr) => {
     */
 
     /* 求出始末值分布的最大和最小区间 , 是解构语法*/
-    let [min,max] = d3.extent(arr.reduce((prev,cur)=>{
-        prev.push(cur[start], cur[end])
-        return prev
-    },[]))
+    let [min,max] = getExtent(link);
 
     dataOrigin.axisnode = d3.range(min,max+1)
     dataOrigin.link = arr.map((d,i)=>{
@@ -59,7 +57,8 @@ let varia = (arr) => {
 /* **************Begin to build output data******************** */
 
     let dataOutput = {};
-    dataOutput.axisnode = [];
+    dataOutput.axisnodePos = [];
+    dataOutput.axisnodeNeg = [];
     dataOutput.link = [];
 
     //定义环形的映射比例尺
@@ -67,11 +66,19 @@ let varia = (arr) => {
     .domain([max,min])
     .range([0, Math.PI])
 
-    dataOutput.axisnode = dataOrigin.axisnode.map((d, i)=>{
+    dataOutput.axisnodePos = dataOrigin.axisnode.map((d, i)=>{
         return {
             uid: i,
             tick: d,
             angle: angle(d)
+        }
+    })
+
+    dataOutput.axisnodeNeg = dataOrigin.axisnode.map((d, i)=>{
+        return {
+            uid: i,
+            tick: d,
+            angle: -angle(d)
         }
     })
 
@@ -80,12 +87,12 @@ let varia = (arr) => {
         let from = d[start], to = d[end]
 
 
-        let fromArrayEle = dataOutput.axisnode.findIndex((item)=>{
+        let fromArrayEle = dataOutput.axisnodePos.findIndex((item)=>{
             return item.tick == from
         })
         fromArray.push(fromArrayEle)
 
-        let toArrayEle = dataOutput.axisnode.findIndex((item)=>{
+        let toArrayEle = dataOutput.axisnodePos.findIndex((item)=>{
             return item.tick == to
         })
         toArray.push(toArrayEle)
@@ -109,13 +116,47 @@ let varia = (arr) => {
     })
 
     //check out the build of original dataset
-    if(dataOutput.axisnode.length!=0&&dataOutput.link.length!=0){
+    if(dataOutput.axisnodePos.length!=0&&dataOutput.link.length!=0){
         console.log('Build output data successfully.',dataOutput)
     }
 
     return dataOutput;
 }
 
+let getFields = (arr)=>{
+    const [name,start,end] = Object.keys(arr[0])
+    const attributes = Object.keys(arr[0]).splice(3)
+    return [name,start,end].concat(attributes)
+}
+
+let getMainFields = (arr)=>{
+    const [name,start,end] = Object.keys(arr[0])
+    return [name,start,end];
+}
+
+let getAddFields = (arr)=>{
+    return Object.keys(arr[0]).splice(3);
+    
+}
+
+let getExtent = (arr)=>{
+    /* 按对象的排布顺序找出name,start和end字段 */
+    let [name,start,end] = Object.keys(arr[0])
+    let attributes = Object.keys(arr[0]).splice(3)
+    
+    /* 求出始末值分布的最大和最小区间 , 是解构语法*/
+    let [min,max] = d3.extent(arr.reduce((prev,cur)=>{
+        prev.push(cur[start], cur[end])
+        return prev
+    },[]))
+
+    return [min,max];
+}
+
 export {
-    varia
+    varia,
+    getFields,
+    getMainFields,
+    getAddFields,
+    getExtent
 }

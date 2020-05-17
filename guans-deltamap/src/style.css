@@ -1,0 +1,78 @@
+.axis-outer{
+    stroke: rgb(82, 79, 79);
+    stroke-width: 2px;
+}
+.axis-inner{
+    stroke: rgb(82, 79, 79);
+    stroke-width: 1.5px;
+}
+.link{
+    stroke-opacity: 0.5;
+    stroke-width: 2.5px;
+    stroke-linecap: round;
+    transition: all 0.3s ease;
+
+}
+.link-d{
+    /* stroke-width: 5; */
+    /* transition: all 0.3s ease; */
+    stroke-linecap: round;
+
+}
+.radial-stroke{
+    stroke: gray;
+    stroke-dasharray: 4px;
+    stroke-width: 1px;
+    opacity: 0.5;
+}
+.tooltip{
+    position: absolute; 
+    padding: 10px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    text-align: left;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+.link:hover{
+    stroke-width: 6px;
+    stroke-opacity: 1;
+}
+/* 修改gui的样式 */
+.dg .c .slider-fg {
+    background: #d6642f;
+}
+.dg .cr.number input[type=text] {
+    color: #d6642f;
+}
+.panel{
+    position: absolute;
+    right: 0;
+    top:180px;
+    min-width:300px;
+    text-align: center;
+    font: 4em  "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: rgb(139, 139, 139);
+    line-height: 1.5em;
+}
+#counter{
+    font-size: 2.4em;
+}
+.st0{fill:#FFBC4A;}
+.st1{fill:#31B729;}
+.st2{fill:#FF5D5B;}
+.st3{fill:#5171FE;}
+.st4{fill:none;}
+.st5{font-family:'ArialMT';}
+.st6{font-size:380px;}
+.st7{fill:#BFBFBF;}
+.st8{font-size:55px;}
+.st9{letter-spacing:12;}
+.logo{
+    position: absolute;
+    bottom: 0;
+    left:0;
+}

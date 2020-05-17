@@ -5,18 +5,24 @@ Deltamap
 Deltamap is a javascript method to build a svg plot by calling the methods included in the lib itself.
 You can install it via `npm`:
 ```shell
-npm install guans-deltamap
+npm install guans-deltamap --dev-save
 ```
 The initial pipeline and approach to use it are as follows:
 
 As SCRIPT method: 
-`<script src="unpkg/deltamap@x.x.x/dist/deltamap.min.js"></script>`
+```html
+<script src="unpkg/deltamap@x.x.x/dist/deltamap.min.js"></script>
+```
 
 As CommonJS method:
-`const dm = require('guans-deltamap')`
+```js
+const dm = require('guans-deltamap')
+```
 
 As ES2015 method:
-`import * as dm from 'guans-deltamap'`
+```js
+import * as dm from 'guans-deltamap'
+```
 
 
 Format
@@ -31,12 +37,38 @@ Array nodes,
 Array links
 */
 ```
-Please note that the data to be imported must meet the conditon that the `first three fields` must be `name`, `value1`, `value2`, others fields could include additional attributes.
+Please note that the data to be imported must meet the conditon that the `first three fields` must be `ego-name`, `value1`, `value2` sort, other fields could include additional attributes.
 
 Visualize
 ---
 use `dm.vis()`
+```php
+/* 
+This is the method inherited from the format.js
+To comvert formatted data into svg plot.`
+*/
+/* 
+@params Array data
+@params Array cirlce center coordinates
+@params Array Outer and inner radius
+@params String The params tto controls the color map of the stroke
 
+@return null
+*/
+```
+The `dm.vis()` method includes modules to render a deltamap plot into specific dom element.
+Basic params could be `data`, `c`, `radius` and `additional` fields.
+The `additional` field is the additional info user wanna carry with.
+The deltamap algo can handle the `add` field automatically and render the strokes via type of `add`.
+(Double colors if its boolean or gradient color if its number) 
+
+Besides, the algo provides a interface allowing users control and modify the deltamap outside.
+So meet various customized needs. The grammar like:
+```js
+let plot = dm.vis(svg, dataOutput,[480,300],[250,175],'waterContent')
+plot.links.attr('stroke','pink')
+plot.link_d.attr('stroke','green')
+```
 
 Info
 ---

@@ -1,5 +1,8 @@
 import { info } from '../info/info'
-import { varia } from '../format/format'
+import { varia, getFields, getMainFields, getAddFields, getExtent} from '../format/format'
+import { vis } from '../visualize/index'
+
+import './style.css'
 
 /* Insert attributes into global. Its ez to debug outside the IDE */
 Object.keys(info).forEach(function (obj) {
@@ -8,5 +11,10 @@ Object.keys(info).forEach(function (obj) {
 
 export {
   info,
-  varia
+  varia,
+  getFields,
+  getMainFields,
+  getAddFields,
+  vis,
+  getExtent
 };
