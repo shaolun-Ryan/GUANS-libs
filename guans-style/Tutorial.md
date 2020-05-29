@@ -4,7 +4,7 @@ Tutorial
 `<header>`
 ---
 `header-green`
-![sample]()
+![sample](https://gitee.com/shaolunryan/GUANS-libs/raw/master/guans-style/static/_20200529171833.png)
 ```html
 <header class="header-green">
         <div class="left">
@@ -36,7 +36,7 @@ Tutorial
 ```
 ******
 `header-blue`
-![sample]()
+![sample](https://gitee.com/shaolunryan/GUANS-libs/raw/master/guans-style/static/_20200529171905.png)
 ```html
  <header class="header-blue">
         <div class="left">
@@ -68,7 +68,7 @@ Tutorial
 ```
 ******
 `header-purple`
-![sample]()
+![sample](https://gitee.com/shaolunryan/GUANS-libs/raw/master/guans-style/static/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20200529171753.png)
 ```html
  <header class="header-purple">
         <div class="left">
@@ -101,7 +101,7 @@ Tutorial
 ******
 
 `header-black`
-![sample]()
+![sample](https://gitee.com/shaolunryan/GUANS-libs/raw/master/guans-style/static/20200529171629.png)
 ```html
  <header class="header-black">
         <div class="left">
