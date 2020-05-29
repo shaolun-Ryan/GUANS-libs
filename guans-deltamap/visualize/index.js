@@ -11,9 +11,10 @@ To comvert formatted data into svg plot.`
 @return null
 */
 import * as d3 from 'd3';
+import * as dat from 'dat.gui'
 import { select } from 'd3-selection'
 
-import { getExtent } from '../format/format';
+import { getExtent, getExtentFromOutput } from '../format/format';
 
 let vis = (svg, data, c=[], r=[], add=false)=>{
     /* 
@@ -39,30 +40,86 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
     }
 
     /* 创建add解析函数 */
-    if(typeof data.link[0][add] == 'boolean'){
-        console.log(typeof data.link[0][add])
-    }else if(typeof data.link[0][add] == 'number'){
-        console.log(typeof data.link[0][add])
+        //实现两种颜色区域的渐变
+        let addColor, colorAsc, colorDec;
+        if(typeof data.link[0][add] == 'number'){
+            //TODO:定制渐变的颜色映射
+            addColor = d3.scaleSequential(d3.interpolateLab("#d9eaf7", "#1B9CFC"))
+            .domain(d3.extent(data.link.reduce((prev,cur)=>{
+                prev.push(cur[add])
+                return prev;
+            },[])));
+        }
 
-    }
+        if(!add){   
+            let acs = data.link.reduce((prev,cur)=>{
+                if(cur.delta>=0){
+                    prev.push(cur.delta)
+                    return prev;
+                }
+                return prev;
+            },[])
+            let dec = data.link.reduce((prev,cur)=>{
+                if(cur.delta<0){
+                    prev.push(cur.delta)
+                    return prev;
+                }
+                return prev;
+            },[])
+            if(acs.length>2&&dec.length>2){
+                //TODO:定制无附加属性的颜色映射
+                colorAsc = d3.scaleSequential(d3.interpolateLab("white", "green"))
+                .domain(d3.extent(acs));
+                colorDec = d3.scaleSequential(d3.interpolateLab("white", "red"))
+                .domain(d3.extent(dec));
+            }else if(acs.length>1&&dec.length==1){
+                colorAsc = d3.scaleSequential(d3.interpolateLab("white", "green"))
+                .domain(d3.extent(acs));
+                colorDec = ()=>{
+                    return 'red';
+                };
+            }else if(dec.length>1&&acs.length==1){
+                colorAsc = ()=>{
+                    return 'green';
+                };
+                colorDec = d3.scaleSequential(d3.interpolateLab("white", "red"))
+                .domain(d3.extent(dec));
+            }
+        }
+        function colorMap(d){
+            /* add参数没有指定时 */
+            if(!add){
+                return d.delta>=0? colorAsc(d.delta) : colorDec(d.delta);
+            /* add参数指定为数值型时 */
+            //TODO:定制add为布尔值时的颜色映射
+            }else if(typeof data.link[0][add] == 'boolean'){
+                return d.add == true?'#2d3436':'#b2bec3';
+            /* add参数指定为布尔型时 */
+            }else if(typeof data.link[0][add] == 'number'){
+                return addColor(d.add)
+            }
+        }
 
 
     const outerRadius = r[0], innerRadius = r[1];
-    const max = getExtent(link)[1], min = getExtent(link)[0]
+    const max = getExtentFromOutput(data)[1], min = getExtentFromOutput(data)[0]
 
-    
+    svg
+    .selectAll('*')
+    .remove()
+
     /* 创建包含dm的g，并且移动到指定位置 */
     svg = svg.append('g')
     .attr('transform', `translate(${c[0]},${c[1]})`)
 
     //定义环形的映射比例尺
     let scale = d3.scaleLinear()
-    .domain(getExtent(link))
+    .domain([min, max])
     .range([Math.PI, 0])
 
     //用于绘制左半圆的刻度
     let scale2 = d3.scaleLinear()
-    .domain(getExtent(link))
+    .domain([min,max])
     .range([-Math.PI, 0])
     
     //画放射的标识虚线
@@ -70,8 +127,8 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
     .angle(d=>d.angle)  
     .radius(d=>d.radius)
 
-    let strokeDataForPolarAxis = dataOutput.axisnodePos.map((d,i)=>{
-        return d.tick%10 == 0 ||d.uid == 0 ||d.uid == dataOutput.axisnodePos.length?
+    let strokeDataForPolarAxis = data.axisnodePos.map((d,i)=>{
+        return d.tick%10 == 0 ||d.uid == 0 ||d.uid == data.axisnodePos.length?
         [
             {
                 angle: 0,
@@ -93,8 +150,8 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
     .attr('d', radialLine)
     
     //Neg
-    strokeDataForPolarAxis = dataOutput.axisnodeNeg.map((d,i)=>{
-        return d.tick%10 == 0 ||d.uid == 0 ||d.uid == dataOutput.axisnodeNeg.length?
+    strokeDataForPolarAxis = data.axisnodeNeg.map((d,i)=>{
+        return d.tick%10 == 0 ||d.uid == 0 ||d.uid == data.axisnodeNeg.length?
         [
             {
                 angle: 0,
@@ -254,17 +311,18 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
             // let intersectCounter = 0
 
             //绘制axis之间的link
-            let dataForRadialLine = dataOutput.link.map((d,i)=>{
+            let dataForRadialLine = data.link.map((d,i)=>{
                 return d.delta>=0?
                 [{
                     uid: d.uid,
                     name: d.name,
                     fromId: d.fromId,
                     toId: d.toId,
-                    fromGrade: d.fromGrade,
-                    toGrade: d.toGrade,
+                    from: d.from,
+                    to: d.to,
                     delta: d.delta,
-                    angle:dataOutput.axisnodePos[d.fromId].angle,
+                    add: d[add],
+                    angle:data.axisnodePos[d.fromId].angle,
                     radius: outerRadius
                     },{
                     // uid: d.uid,
@@ -274,7 +332,7 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
                     // fromGrade: d.fromGrade,
                     // toGrade: d.toGrade,
                     // delta: d.delta,
-                    angle:dataOutput.axisnodePos[d.toId].angle,
+                    angle:data.axisnodePos[d.toId].angle,
                     radius: innerRadius
                 }]
                 :
@@ -283,10 +341,11 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
                     name: d.name,
                     fromId: d.fromId,
                     toId: d.toId,
-                    fromGrade: d.fromGrade,
-                    toGrade: d.toGrade,
+                    from: d.from,
+                    to: d.to,
                     delta: d.delta,
-                    angle:dataOutput.axisnodeNeg[d.fromId].angle,
+                    add: d[add],
+                    angle:data.axisnodeNeg[d.fromId].angle,
                     radius: outerRadius
                     },{
                     // uid: d.uid,
@@ -296,7 +355,7 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
                     // fromGrade: d.fromGrade,
                     // toGrade: d.toGrade,
                     // delta: d.delta,
-                    angle:dataOutput.axisnodeNeg[d.toId].angle,
+                    angle:data.axisnodeNeg[d.toId].angle,
                     radius: innerRadius
                 }]
         })
@@ -308,7 +367,7 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
         .attr('class', 'link')
         .attr('d', radialLine)
         .attr('stroke', d=>{
-            return 'grey'
+            return colorMap(d[0])
         })
         // .each(d=>{
         //     if(Math.sqrt(Math.pow(d[0].radius,2)+(Math.pow(d[1].radius,2))-2*d[0].radius*d[1].radius*Math.cos(d[0].angle-d[1].angle))>tangent){
@@ -337,7 +396,7 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
         .attr('class', 'link-d')
         .attr('d', radialLine)
         .attr('stroke', d=>{
-            return '#000'
+            return colorMap(d[0])
         })
         .attr('stroke-width', 5)
         .on('mouseover', mouseover_d)
@@ -351,7 +410,8 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
         .attr('y1',-outerRadius)
         .attr('y2',outerRadius)
         .attr('stroke','rgb(82, 79, 79)')
-        .attr('stroke-width','1.5px')
+        .attr('stroke-width','1px')
+        .attr('stroke-dasharray', '6,3')
 
 
         //交互：tooltip  mouseover
@@ -364,8 +424,6 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
             .style('left', (event.offsetX) + "px")
             .style("top", (event.offsetY - 28) + "px");
             link_d.style('display', 'none')
-            
-            // console.log(event)
         }
         
         function mouseout(d,i){
@@ -381,7 +439,7 @@ let vis = (svg, data, c=[], r=[], add=false)=>{
             .transition()
             .duration(170)
             .style('opacity', 0.9);
-            div.html(`Name: ${d[0].name}</br>Period One: ${d[0].fromGrade}</br>Period Two: ${d[0].toGrade}</br>delta: ${d[0].delta}`)
+            div.html(`Name: ${d[0].name}</br>Period One: ${d[0].from}</br>Period Two: ${d[0].to}</br>delta: ${d[0].delta}`)
             .style('left', (event.offsetX) + "px")
             .style("top", (event.offsetY - 28) + "px");
             link_d.style('display', 'none')

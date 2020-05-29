@@ -1,5 +1,3 @@
-Deltamap
-===
 ![logo](https://raw.githubusercontent.com/shaolun-Ryan/GUANS-libs/master/guans-deltamap/info/logo.svg)
 
 Deltamap is a javascript method to build a svg plot by calling the methods included in the lib itself.

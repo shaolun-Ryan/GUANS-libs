@@ -2,6 +2,8 @@ import { info } from '../info/info'
 import { varia, getFields, getMainFields, getAddFields, getExtent} from '../format/format'
 import { vis } from '../visualize/index'
 
+import getTest from '../getTest.js'
+
 import './style.css'
 
 /* Insert attributes into global. Its ez to debug outside the IDE */
@@ -16,5 +18,6 @@ export {
   getMainFields,
   getAddFields,
   vis,
-  getExtent
+  getExtent,
+  getTest
 };
