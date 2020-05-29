@@ -20,7 +20,7 @@
     "popper.js": "^1.16.1"
   },
   "name": "guans-style",
-  "version": "1.0.4",
+  "version": "1.0.9",
   "description": "web style for pages from GUANS-Lab",
   "main": "dist/guans-style.js",
   "keywords": [

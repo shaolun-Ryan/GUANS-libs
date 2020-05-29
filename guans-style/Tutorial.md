@@ -4,6 +4,7 @@ Tutorial
 `<header>`
 ---
 `header-green`
+![sample]()
 ```html
 <header class="header-green">
         <div class="left">
@@ -35,6 +36,7 @@ Tutorial
 ```
 ******
 `header-blue`
+![sample]()
 ```html
  <header class="header-blue">
         <div class="left">
@@ -66,6 +68,7 @@ Tutorial
 ```
 ******
 `header-purple`
+![sample]()
 ```html
  <header class="header-purple">
         <div class="left">
@@ -97,7 +100,8 @@ Tutorial
 ```
 ******
 
-`header-purple`
+`header-black`
+![sample]()
 ```html
  <header class="header-black">
         <div class="left">
